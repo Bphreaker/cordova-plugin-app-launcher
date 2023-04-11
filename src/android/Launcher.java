@@ -35,7 +35,6 @@ import java.util.HashSet;
 
 public class Launcher extends CordovaPlugin {
 	public static final String TAG = "Launcher Plugin";
-	/*public static final String ACTION_CAN_LAUNCH = "canLaunch";*/
 	public static final String ACTION_LAUNCH = "launch";
 	public static final int LAUNCH_REQUEST = 0;
 
@@ -51,125 +50,11 @@ public class Launcher extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		callback = callbackContext;
-		/*if (ACTION_CAN_LAUNCH.equals(action)) {
-			return canLaunch(args);
-		} else*/
 		if (ACTION_LAUNCH.equals(action)) {
 			return launch(args);
 		}
 		return false;
 	}
-
-	/*private boolean canLaunch(JSONArray args) throws JSONException {
-		final JSONObject options = args.getJSONObject(0);
-		final CordovaInterface mycordova = cordova;
-		final CordovaPlugin plugin = this;
-
-		if (options.has("packageName")) {
-			final String appPackageName = options.getString("packageName");
-			cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
-				public void run() {
-					final Intent intent = new Intent(Intent.ACTION_VIEW);
-					String packageName = appPackageName;
-					String passedActivityName = null;
-					if (packageName.contains("/")) {
-						String[] items = appPackageName.split("/");
-						packageName = items[0];
-						passedActivityName = items[1];
-					}
-					final ActivityInfo appInfo = getAppInfo(intent, packageName);
-
-					if (appInfo != null) {
-						Log.d(TAG, "App Info found for " + packageName);
-						callbackContext.success();
-					} else {
-						final PackageManager pm = plugin.webView.getContext().getPackageManager();
-						final Intent launchIntent = pm.getLaunchIntentForPackage(packageName);
-						if (launchIntent != null) {
-							Log.d(TAG, "Launch Intent for " + packageName + " found.");
-							callbackContext.success();
-						} else {
-							Log.d(TAG, "Could not find launch intent for package: " + packageName);
-							callbackContext.error("Application is not installed.");
-						}
-					}
-
-				}
-			});
-		} else if (options.has("uri")) {
-			final String uri = options.getString("uri");
-			final String dataType = options.has("dataType") ? options.getString("dataType") : null;
-
-			cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
-				public void run() {
-					final PackageManager pm = plugin.webView.getContext().getPackageManager();
-					final Intent intent = new Intent(Intent.ACTION_VIEW);
-					if (dataType != null) {
-						intent.setDataAndType(Uri.parse(uri), dataType);
-					} else {
-						intent.setData(Uri.parse(uri));
-					}
-
-					List<ResolveInfo> resInfos = pm.queryIntentActivities(intent, 0);
-					if (resInfos.size() > 0) {
-						Log.d(TAG, "Found Activities that handle uri: " + uri);
-
-						boolean shouldGetAppList = false;
-						try {
-							shouldGetAppList = options.has("getAppList") && options.getBoolean("getAppList") == true;
-						} catch (JSONException e) {}
-
-						if (shouldGetAppList) {
-							JSONObject obj = new JSONObject();
-							JSONArray appList = new JSONArray();
-
-							for(ResolveInfo resolveInfo : resInfos) {
-								try {
-									appList.put(resolveInfo.activityInfo.packageName);
-								} catch (Exception e) {
-									//Do Nothing
-								}
-							}
-
-							try {
-								obj.put("appList", wrap(appList));
-							} catch(Exception e) {
-
-							}
-							callbackContext.success(obj);
-						} else {
-							callbackContext.success();
-						}
-					} else {
-						Log.d(TAG, "No Activities found that handle uri: " + uri);
-						callbackContext.error("No application found.");
-					}
-				}
-			});
-		} else if (options.has("actionName")) {
-			canLaunchAction(options.getString("actionName"));
-		}
-
-		return true;
-	}*/
-
-	/*private void canLaunchAction(final String actionName) {
-		final CordovaPlugin plugin = this;
-		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
-			public void run() {
-				final PackageManager pm = plugin.webView.getContext().getPackageManager();
-				final Intent intent = new Intent(actionName);
-				List<ResolveInfo> resInfos = pm.queryIntentActivities(intent, 0);
-				if (resInfos.size() > 0) {
-					Log.d(TAG, "Found Activity that handles action: " + actionName);
-					callbackContext.success();
-				} else {
-					Log.d(TAG, "No Activity found that handles action: " + actionName);
-					callbackContext.error("No application found.");
-				}
-			}
-		});
-	}*/
 
 	private ActivityInfo getAppInfo(final Intent intent, final String appPackageName) {
 		final PackageManager pm = webView.getContext().getPackageManager();
@@ -302,12 +187,6 @@ public class Launcher extends CordovaPlugin {
 						extras.putCharSequenceArray(extraName, ParseTypes.toCharSequenceArray(extra.getJSONArray("value")));
 					} else if (dataType.equalsIgnoreCase("CharSequenceArrayList")) {
 						extras.putCharSequenceArrayList(extraName, ParseTypes.toCharSequenceArrayList(extra.getJSONArray("value")));
-					/*
-					} else if (dataType.equalsIgnoreCase("Size") && Build.VERSION.SDK_INT >= 21) {
-						extras.putSize(extraName, extra.getJSONObject("value"));
-					} else if (dataType.equalsIgnoreCase("SizeF") && Build.VERSION.SDK_INT >= 21) {
-						extras.putSizeF(extraName, extra.getJSONObject("value"));
-					*/
 					} else if (dataType.toLowerCase().contains("parcelable")) {
 						if (!extra.has("paType")) {
 							Log.e(TAG, "Property 'paType' must be provided if dataType is " + dataType + ".");
