@@ -35,7 +35,7 @@ import java.util.HashSet;
 
 public class Launcher extends CordovaPlugin {
 	public static final String TAG = "Launcher Plugin";
-	public static final String ACTION_CAN_LAUNCH = "canLaunch";
+	/*public static final String ACTION_CAN_LAUNCH = "canLaunch";*/
 	public static final String ACTION_LAUNCH = "launch";
 	public static final int LAUNCH_REQUEST = 0;
 
@@ -51,15 +51,16 @@ public class Launcher extends CordovaPlugin {
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
 		callback = callbackContext;
-		if (ACTION_CAN_LAUNCH.equals(action)) {
+		/*if (ACTION_CAN_LAUNCH.equals(action)) {
 			return canLaunch(args);
-		} else if (ACTION_LAUNCH.equals(action)) {
+		} else*/
+		if (ACTION_LAUNCH.equals(action)) {
 			return launch(args);
 		}
 		return false;
 	}
 
-	private boolean canLaunch(JSONArray args) throws JSONException {
+	/*private boolean canLaunch(JSONArray args) throws JSONException {
 		final JSONObject options = args.getJSONObject(0);
 		final CordovaInterface mycordova = cordova;
 		final CordovaPlugin plugin = this;
@@ -150,9 +151,9 @@ public class Launcher extends CordovaPlugin {
 		}
 
 		return true;
-	}
+	}*/
 
-	private void canLaunchAction(final String actionName) {
+	/*private void canLaunchAction(final String actionName) {
 		final CordovaPlugin plugin = this;
 		cordova.getThreadPool().execute(new LauncherRunnable(this.callback) {
 			public void run() {
@@ -168,7 +169,7 @@ public class Launcher extends CordovaPlugin {
 				}
 			}
 		});
-	}
+	}*/
 
 	private ActivityInfo getAppInfo(final Intent intent, final String appPackageName) {
 		final PackageManager pm = webView.getContext().getPackageManager();
